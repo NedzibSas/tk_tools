@@ -641,11 +641,11 @@ class Thermo(Dial):
 
         number = number if number <= self.max_value else self.max_value
         number = 0.0 if number < 0.0 else number
-        y_zero = 58
-        x_line =(self.size/2.0)-10
-        y_line =self.size-y_zero-number
-        x1_line =(self.size/2.0)+10
-        y1_line =self.size-y_zero-number
+        y_zero = (self.size*72.5)/100
+        x_line =(self.size*45)/100
+        y_line =y_zero-number
+        x1_line =(self.size*55)/100
+        y1_line =y_zero-number
 
         if self.needle_thickness == 0:
             line_width = int(5 * self.size / 200)
