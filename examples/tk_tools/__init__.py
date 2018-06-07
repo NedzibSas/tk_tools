@@ -1,4 +1,4 @@
-from tk_tools.canvas import RotaryScale, Gauge, Graph, Led
+from tk_tools.canvas import RotaryScale, Gauge, Graph, Led, Thermo
 from tk_tools.groups import EntryGrid, LabelGrid, \
     KeyValueEntry, SpreadSheetReader, ButtonGrid, \
     Calendar, MultiSlotFrame, SevenSegment, SevenSegmentDigits
