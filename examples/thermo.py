@@ -34,13 +34,11 @@ if __name__ == '__main__':
     p2 = tk_tools.Thermo(root,
                               max_value=max_value,
                               size=200,
-                              needle_thickness=3,
-                              needle_color='black',
-                              img_data=rotary_gauge_volt)
+                              thermo_color='red')
 
     p2.grid(row=0, column=1)
 
-    increment_value = 1.0
+    increment_value = 10.0
     value = 0.0
 
     inc_btn = tk.Button(root,

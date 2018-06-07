@@ -602,15 +602,14 @@ class Thermo(Dial):
     def __init__(self, parent,
                  max_value: (float, int)=100.0, size: (float, int)=200,
                  unit: str=None, img_data: str=None,
-                 needle_color='blue', needle_thickness=0,
+                 thermo_color='red',
                  **options):
         super().__init__(parent, size=size, **options)
 
         self.max_value = float(max_value)
         self.size = size
         self.unit = '' if not unit else unit
-        self.needle_color = needle_color
-        self.needle_thickness = needle_thickness
+        self.thermo_color = thermo_color
 
         self.canvas = tk.Canvas(self, width=self.size, height=self.size)
         self.canvas.grid(row=0)
@@ -637,25 +636,25 @@ class Thermo(Dial):
         :return: None
         """
         self.canvas.delete('all')
-        self.canvas.create_image(0, 0, image=self.image, anchor='nw')
+        
+        numberr=number
+        number = (number*((self.size*66.5)/100))/self.max_value
 
-        number = number if number <= self.max_value else self.max_value
-        number = 0.0 if number < 0.0 else number
         y_zero = (self.size*72.5)/100
         x_line =(self.size*45)/100
         y_line =y_zero-number
         x1_line =(self.size*55)/100
         y1_line =y_zero-number
 
-        if self.needle_thickness == 0:
-            line_width = int(5 * self.size / 200)
-            line_width = 1 if line_width < 1 else line_width
-        else:
-            line_width = self.needle_thickness
-
         self.canvas.create_line(x_line,y_line,x1_line,y1_line)
-        #self.canvas.create_oval()
-        self.readout['text'] = '{}{}'.format(number, self.unit)
+        self.canvas.create_rectangle(x_line,y_line,x1_line,y_zero,fill=self.thermo_color)
+        x1_oval=(self.size*36)/100
+        y1_oval=(self.size*72.5)/100
+        x2_oval=(self.size*64)/100
+        y2_oval=(self.size*98.5)/100
+        self.canvas.create_oval(x1_oval,y1_oval,x2_oval,y2_oval,fill=self.thermo_color)
+        self.readout['text'] = '{}{}'.format(numberr, self.unit)
+        self.canvas.create_image(0, 0, image=self.image, anchor='nw')
 
     def _draw_background(self, divisions=10):
         """
