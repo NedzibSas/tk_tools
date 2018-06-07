@@ -34,7 +34,8 @@ if __name__ == '__main__':
     p2 = tk_tools.Thermo(root,
                               max_value=max_value,
                               size=200,
-                              thermo_color='red')
+                              thermo_color='red',
+                              unit='C°')
 
     p2.grid(row=0, column=1)
 

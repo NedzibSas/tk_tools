@@ -585,9 +585,10 @@ class Led(ttk.Frame):
                 self._canvas.bind('<Button-1>',
                                   lambda x: self.to_yellow(True))
 
+
 class Thermo(Dial):
     """
-    Shows a rotary scale, much like a speedometer.::
+    Shows a Thermometer::
 
         rs = tk_tools.RotaryScale(root, max_value=100.0, size=100, unit='km/h')
         rs.grid(row=0, column=0)
@@ -598,6 +599,8 @@ class Thermo(Dial):
     :param max_value: the value corresponding to the maximum value on the scale
     :param size: the size in pixels
     :param options: the frame options
+    :param unit: units in string C°,K,F°
+    :param thermo_color: color fill of the thermo
     """
     def __init__(self, parent,
                  max_value: (float, int)=100.0, size: (float, int)=200,
