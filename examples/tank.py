@@ -1,9 +1,7 @@
 import tkinter as tk
 import tk_tools
 
-from tk_tools.images import rotary_gauge_volt
-
-max_value = 100.0
+max_value = 1000.0
 min_value = 0.0
 
 
@@ -31,11 +29,11 @@ if __name__ == '__main__':
 
     root = tk.Tk()
 
-    p2 = tk_tools.Thermo(root,
+    p2 = tk_tools.Tank(root,
                               max_value=max_value,
-                              size=100,
-                              thermo_color='red',
-                              unit='C°')
+                              size=200,
+                              tank_color='sky blue',
+                              unit='Cm')
 
     p2.grid(row=0, column=1)
 

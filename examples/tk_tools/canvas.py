@@ -9,7 +9,7 @@ from engineering_notation import EngNumber
 try:
     from tk_tools.images import rotary_scale, \
         led_green, led_green_on, led_yellow, led_yellow_on, \
-        led_red, led_red_on, led_grey, thermo
+        led_red, led_red_on, led_grey, thermo, tank
 except ImportError:
     pass
 
@@ -590,10 +590,10 @@ class Thermo(Dial):
     """
     Shows a Thermometer::
 
-        rs = tk_tools.RotaryScale(root, max_value=100.0, size=100, unit='km/h')
-        rs.grid(row=0, column=0)
+        th = tk_tools.Thermo(root, max_value=100.0, size=100, unit='C°')
+        th.grid(row=0, column=0)
 
-        rs.set_value(10)
+        th.set_value(10)
 
     :param parent: tkinter parent frame
     :param max_value: the value corresponding to the maximum value on the scale
@@ -604,7 +604,7 @@ class Thermo(Dial):
     """
     def __init__(self, parent,
                  max_value: (float, int)=100.0, size: (float, int)=200,
-                 unit: str=None, img_data: str=None,
+                 unit: str=None,
                  thermo_color='red',
                  **options):
         super().__init__(parent, size=size, **options)
@@ -618,11 +618,7 @@ class Thermo(Dial):
         self.canvas.grid(row=0)
         self.readout = tk.Label(self, text='-{}'.format(self.unit))
         self.readout.grid(row=1)
-
-        if img_data:
-            self.image = tk.PhotoImage(data=thermo)
-        else:
-            self.image = tk.PhotoImage(data=thermo)
+        self.image = tk.PhotoImage(data=thermo)
 
         self.image = self.image.subsample(int(200 / self.size),
                                           int(200 / self.size))
@@ -659,36 +655,67 @@ class Thermo(Dial):
         self.readout['text'] = '{}{}'.format(numberr, self.unit)
         self.canvas.create_image(0, 0, image=self.image, anchor='nw')
 
-    def _draw_background(self, divisions=10):
-        """
-        Draws the background of the dial
 
-        :param divisions: the number of divisions
-        between 'ticks' shown on the dial
+class Tank(Dial):
+    """
+    Shows a Tank::
+
+        tn = tk_tools.Tank(root, max_value=100.0, size=100, unit='Cm')
+        tn.grid(row=0, column=0)
+
+        tn.set_value(10)
+
+    :param parent: tkinter parent frame
+    :param max_value: the value corresponding to the maximum value on the scale
+    :param size: the size in pixels
+    :param options: the frame options
+    :param unit: units in string Cm,L,Oz
+    :param tank_color: color fill of the tank
+    """
+    def __init__(self, parent,
+                 max_value: (float, int)=100.0, size: (float, int)=200,
+                 unit: str=None,
+                 tank_color='sky blue',
+                 **options):
+        super().__init__(parent, size=size, **options)
+
+        self.max_value = float(max_value)
+        self.size = size
+        self.unit = '' if not unit else unit
+        self.tank_color = tank_color
+
+        self.canvas = tk.Canvas(self, width=self.size, height=self.size)
+        self.canvas.grid(row=0)
+        self.readout = tk.Label(self, text='-{}'.format(self.unit))
+        self.readout.grid(row=1)
+        self.image = tk.PhotoImage(data=tank)
+
+        self.image = self.image.subsample(int(200 / self.size),
+                                          int(200 / self.size))
+
+        initial_value = 0.0
+        self.set_value(initial_value)
+
+    def set_value(self, number: (float, int)):
+        """
+        Sets the value of the graphic
+
+        :param number: the number (must be between 0 and \
+        'max_range' or the scale will peg the limits
         :return: None
         """
-        self.canvas.create_arc(2, 2, self.size-2, self.size-2,
-                               style=tk.PIESLICE, start=-60, extent=30,
-                               fill='red')
-        self.canvas.create_arc(2, 2, self.size-2, self.size-2,
-                               style=tk.PIESLICE, start=-30, extent=60,
-                               fill='yellow')
-        self.canvas.create_arc(2, 2, self.size-2, self.size-2,
-                               style=tk.PIESLICE, start=30, extent=210,
-                               fill='green')
+        self.canvas.delete('all')
+        
+        numberr=number
+        number = (number*((self.size*63.5)/100))/self.max_value
 
-        # find the distance between the center and the inner tick radius
-        inner_tick_radius = int(self.size * 0.4)
-        outer_tick_radius = int(self.size * 0.5)
+        y_zero = (self.size*87.8)/100
+        x_line =(self.size*9.5)/100
+        y_line =y_zero-number
+        x1_line =(self.size*89)/100
+        y1_line =y_zero-number
 
-        for tick in range(divisions):
-            angle_in_radians = (2.0 * cmath.pi / 3.0) \
-                               + tick/divisions * (5.0 * cmath.pi / 3.0)
-            inner_point = cmath.rect(inner_tick_radius, angle_in_radians)
-            outer_point = cmath.rect(outer_tick_radius, angle_in_radians)
-
-            self.canvas.create_line(
-                *self.to_absolute(inner_point.real, inner_point.imag),
-                *self.to_absolute(outer_point.real, outer_point.imag),
-                width=1
-            )
+        self.canvas.create_line(x_line,y_line,x1_line,y1_line)
+        self.canvas.create_rectangle(x_line,y_line,x1_line,y_zero,fill=self.tank_color)
+        self.readout['text'] = '{}{}'.format(numberr, self.unit)
+        self.canvas.create_image(0, 0, image=self.image, anchor='nw')
