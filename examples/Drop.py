@@ -29,11 +29,11 @@ if __name__ == '__main__':
 
     root = tk.Tk()
 
-    p2 = tk_tools.Tank(root,
+    p2 = tk_tools.Drop(root,
                               max_value=max_value,
                               size=100,
-                              tank_color='sky blue',
-                              unit='Cm')
+                              drop_color='blue',
+                              unit='%')
 
     p2.grid(row=0, column=1)
 

@@ -9,7 +9,7 @@ from engineering_notation import EngNumber
 try:
     from tk_tools.images import rotary_scale, \
         led_green, led_green_on, led_yellow, led_yellow_on, \
-        led_red, led_red_on, led_grey, thermo, tank
+        led_red, led_red_on, led_grey, thermo, tank, drop
 except ImportError:
     pass
 
@@ -717,5 +717,70 @@ class Tank(Dial):
 
         self.canvas.create_line(x_line,y_line,x1_line,y1_line)
         self.canvas.create_rectangle(x_line,y_line,x1_line,y_zero,fill=self.tank_color)
+        self.readout['text'] = '{}{}'.format(numberr, self.unit)
+        self.canvas.create_image(0, 0, image=self.image, anchor='nw')
+
+
+class Drop(Dial):
+    """
+    Shows a Drop::
+
+        dp = tk_tools.Drop(root, max_value=100.0, size=100, unit='%')
+        dp.grid(row=0, column=0)
+
+        dp.set_value(10)
+
+    :param parent: tkinter parent frame
+    :param max_value: the value corresponding to the maximum value on the scale
+    :param size: the size in pixels
+    :param options: the frame options
+    :param unit: units in string % or another
+    :param Drop_color: color fill of the Drop
+    """
+    def __init__(self, parent,
+                 max_value: (float, int)=100.0, size: (float, int)=200,
+                 unit: str=None,
+                 drop_color='blue',
+                 **options):
+        super().__init__(parent, size=size, **options)
+
+        self.max_value = float(max_value)
+        self.size = size
+        self.unit = '' if not unit else unit
+        self.drop_color = drop_color
+
+        self.canvas = tk.Canvas(self, width=self.size, height=self.size)
+        self.canvas.grid(row=0)
+        self.readout = tk.Label(self, text='-{}'.format(self.unit))
+        self.readout.grid(row=1)
+        self.image = tk.PhotoImage(data=drop)
+
+        self.image = self.image.subsample(int(200 / self.size),
+                                          int(200 / self.size))
+
+        initial_value = 0.0
+        self.set_value(initial_value)
+
+    def set_value(self, number: (float, int)):
+        """
+        Sets the value of the graphic
+
+        :param number: the number (must be between 0 and \
+        'max_range' or the scale will peg the limits
+        :return: None
+        """
+        self.canvas.delete('all')
+        
+        numberr=number
+        number = (number*((self.size*78)/100))/self.max_value
+
+        y_zero = (self.size*91.5)/100
+        x_line =(self.size*9.5)/100
+        y_line =y_zero-number
+        x1_line =(self.size*89)/100
+        y1_line =y_zero-number
+
+        self.canvas.create_line(x_line,y_line,x1_line,y1_line)
+        self.canvas.create_rectangle(x_line,y_line,x1_line,y_zero,fill=self.drop_color)
         self.readout['text'] = '{}{}'.format(numberr, self.unit)
         self.canvas.create_image(0, 0, image=self.image, anchor='nw')
